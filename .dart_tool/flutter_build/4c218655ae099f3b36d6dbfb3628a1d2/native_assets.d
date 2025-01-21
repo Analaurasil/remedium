@@ -1,0 +1,1 @@
+ C:\\Users\\anala\\remedium25\\.dart_tool\\flutter_build\\4c218655ae099f3b36d6dbfb3628a1d2\\native_assets.yaml: 
