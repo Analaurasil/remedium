@@ -20,8 +20,7 @@ class MenuUsuario extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: () {
-                  //Adicionar aqui a lógica para voltar para a homepage
-                  Navigator.pop(context);
+                  context.go('/homepage'); 
                 },
               ),
               ElevatedButton(
@@ -30,13 +29,13 @@ class MenuUsuario extends StatelessWidget {
                 },
                 child: Text('Editar Perfil'),
               ),
-              ElevatedButton(
+              /*ElevatedButton(
                 onPressed: () {
                   // Lógica 
                   context.go('/relatorio');
                 },
                 child: Text('Gerar Relatório'),
-              ),
+              ),*/
               ElevatedButton(
                 onPressed: () {
                   context.go('/meusMedicamentos');

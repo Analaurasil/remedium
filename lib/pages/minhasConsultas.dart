@@ -1,4 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:remedium25/db_helper.dart';
+import 'package:remedium25/model/consulta.dart';
+
+class MinhasConsultas extends StatefulWidget {
+  @override
+  _MinhasConsultasState createState() => _MinhasConsultasState();
+}
+
+class _MinhasConsultasState extends State<MinhasConsultas> {
+  List<Consulta> consultasList = []; // Lista para armazenar as consultas
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchConsultas(); // Chama o método para buscar consultas ao iniciar
+  }
+
+  Future<void> _fetchConsultas() async {
+    final db = DBHelper(); // Instância do seu DBHelper
+    List<Consulta> consultas = await db.getConsultasForDate(DateTime.now()); // Método para buscar consultas
+    setState(() {
+      consultasList = consultas; // Atualiza a lista de consultas
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Minhas Consultas'),
+      ),
+      body: consultasList.isEmpty
+          ? Center(child: CircularProgressIndicator()) // Exibe um carregando enquanto busca as consultas
+          : ListView.builder(
+              itemCount: consultasList.length,
+              itemBuilder: (context, index) {
+                final consulta = consultasList[index];
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text(consulta.titulo),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Médico: ${consulta.medico}'),
+                        Text('Clínica: ${consulta.clinica}'),
+                        Text('Horário: ${consulta.horario}'),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+/*
+SEM CORREÇÕES
+import 'package:flutter/material.dart';
+import 'package:remedium25/db_helper.dart';
+import 'package:remedium25/model/consulta.dart'; 
+
 
 class MinhasConsultas extends StatefulWidget {
   @override
@@ -84,4 +146,4 @@ class _MinhasConsultasState extends State<MinhasConsultas> {
       ),
     );
   }
-}
+}*/

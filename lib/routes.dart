@@ -71,7 +71,7 @@ final GoRouter router = GoRouter(
         builder: (context, state) => MeuMedicamento(),
       ),*/
       GoRoute(
-        path: '/meuMedicamento',
+        path: '/addMedicamentoManual',
       builder: (context, state) => TelaAddMedicamentoManualmente(),
       ),
       GoRoute(

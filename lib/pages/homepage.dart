@@ -14,7 +14,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int _itemSelecionado = 0;
+  int _itemSelecionado = 1;
   final List<Widget> _subtelas = [
     TelaAlarmes(), // Substitua por sua página de alarmes
     TelaCalendario(), // Substitua por sua página de calendário
@@ -34,7 +34,7 @@ class _HomepageState extends State<Homepage> {
                 title: Text('Adicionar Medicamento'),
                 onTap: () {
                   //caminho para pagina
-                   context.go('/addMedicamento');
+                   context.go('/addMedicamentoManual');
                 },
               ),
               ListTile(

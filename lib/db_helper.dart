@@ -112,7 +112,7 @@ class DBHelper {
     }
   }
 
-  Future<int> insertConsulta(
+  /*Future<int> insertConsulta(
     String titulo,
     DateTime dataHora,
     String medico,
@@ -138,7 +138,34 @@ class DBHelper {
       debugPrint('Error inserting consulta: $e');
       rethrow;
     }
+  }*/
+  Future<int> insertConsulta(
+  String titulo,
+  DateTime dataHora,
+  String medico,
+  String clinica,
+  String endereco,
+  String horario,
+) async {
+  final db = await DBHelper.getInstance();
+  try {
+    // Insira primeiro no calendário
+    int idCalendario = await insertCalendario(dataHora, 'consulta');
+
+    final Map<String, dynamic> data = {
+      'titulo': titulo,
+      'idCalendario': idCalendario.toString(), // Use o id gerado
+      'medico': medico,
+      'clinica': clinica,
+      'endereco': endereco,
+      'horario': horario,
+    };
+    return await db.insert('consulta', data);
+  } catch (e) {
+    debugPrint('Error inserting consulta: $e');
+    rethrow;
   }
+}
 
   Future<List<Medicamento>> getMedicamentos() async {
     final db = await DBHelper.getInstance();
@@ -180,6 +207,21 @@ Future<void> deleteMedicamento(int id) async {
   }
 
   Future<List<Consulta>> getConsultasForDate(DateTime date) async {
+  final db = await getInstance();
+  final List<Map<String, dynamic>> maps = await db.query(
+    'consulta',
+    where: 'horario >= ? AND horario < ?',
+    whereArgs: [
+      date.toIso8601String(), // Início do dia
+      DateTime(date.year, date.month, date.day + 1).toIso8601String() // Início do próximo dia
+    ],
+  );
+
+  return List.generate(maps.length, (i) {
+    return Consulta.fromMap(maps[i]);
+  });
+}
+  /*Future<List<Consulta>> getConsultasForDate(DateTime date) async {
     final db = await getInstance();
     final List<Map<String, dynamic>> maps = await db.query(
       'consulta',
@@ -190,5 +232,5 @@ Future<void> deleteMedicamento(int id) async {
     return List.generate(maps.length, (i) {
       return Consulta.fromMap(maps[i]);
     });
-  }
+  }*/
 }
