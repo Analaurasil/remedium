@@ -7,6 +7,12 @@ class DBHelper {
   static late Database _instance;
   static const String dbName = 'remedium.db';
 
+  /*static Future<void> deleteDatabaseFile() async {
+    String databasesPath = await getDatabasesPath();
+    var path = databasesPath + dbName;
+    await deleteDatabase(path); // Deleta o banco de dados existente
+  }*/
+  
   static Future<Database> getInstance() async {
     String databasesPath = await getDatabasesPath();
     var path = databasesPath + dbName;
@@ -28,9 +34,9 @@ class DBHelper {
     await db.execute(
         'CREATE TABLE  calendario (id INTEGER PRIMARY KEY AUTOINCREMENT, dataHora TEXT, tipo TEXT)');
     await db.execute(
-        'CREATE TABLE  medicamento (id INTEGER PRIMARY KEY AUTOINCREMENT, nomeMedicamento TEXT, laboratorio TEXT, idCalendario TEXT, dosagem TEXT, posologia TEXT, horario TEXT, tempoTratamento TEXT, incioTratamento TEXT, fimTratamento TEXT, quantidade NUMBER, FOREIGN KEY (idCalendario) REFERENCES calendario(id))');
+        'CREATE TABLE  medicamento (id INTEGER PRIMARY KEY AUTOINCREMENT, nomeMedicamento TEXT, laboratorio TEXT, idCalendario TEXT, dosagem TEXT, posologia TEXT, horario TEXT, tempoTratamento TEXT, incioTratamento TEXT, fimTratamento TEXT, quantidade NUMBER, alarmActive INTEGER DEFAULT 0, FOREIGN KEY (idCalendario) REFERENCES calendario(id))');
     await db.execute(
-        'CREATE TABLE  consulta (id INTEGER PRIMARY KEY AUTOINCREMENT, titulo TEXT, idCalendario TEXT, medico TEXT, clinica TEXT, endereco TEXT, horario TEXT, FOREIGN KEY (idCalendario) REFERENCES calendario(id))');
+        'CREATE TABLE  consulta (id INTEGER PRIMARY KEY AUTOINCREMENT, titulo TEXT, idCalendario TEXT, medico TEXT, clinica TEXT, endereco TEXT, horario TEXT, alarmActive INTEGER DEFAULT 0, FOREIGN KEY (idCalendario) REFERENCES calendario(id))');
   }
 
   static void _onOpen(Database db) async {
@@ -87,6 +93,7 @@ class DBHelper {
     String inicioTratamento,
     String fimTratamento,
     int quantidade,
+    bool alarmeAtivo,
   ) async {
     final db = await DBHelper.getInstance();
     try {
@@ -104,6 +111,7 @@ class DBHelper {
         'incioTratamento': inicioTratamento,
         'fimTratamento': fimTratamento,
         'quantidade': quantidade,
+        'alarmActive': alarmeAtivo ? 1 : 0, 
       };
       return await db.insert('medicamento', data);
     } catch (e) {
@@ -146,6 +154,7 @@ class DBHelper {
   String clinica,
   String endereco,
   String horario,
+  bool alarmeAtivo,
 ) async {
   final db = await DBHelper.getInstance();
   try {
@@ -159,6 +168,7 @@ class DBHelper {
       'clinica': clinica,
       'endereco': endereco,
       'horario': horario,
+      'alarmActive': alarmeAtivo ? 1 : 0,
     };
     return await db.insert('consulta', data);
   } catch (e) {
@@ -221,6 +231,14 @@ Future<void> deleteMedicamento(int id) async {
     return Consulta.fromMap(maps[i]);
   });
 }
+Future<List<Consulta>> getConsultas() async {
+  final db = await getInstance();
+  final List<Map<String, dynamic>> maps = await db.query('consulta');
+
+  return List.generate(maps.length, (i) {
+    return Consulta.fromMap(maps[i]);
+  });
+}
   /*Future<List<Consulta>> getConsultasForDate(DateTime date) async {
     final db = await getInstance();
     final List<Map<String, dynamic>> maps = await db.query(
@@ -233,4 +251,5 @@ Future<void> deleteMedicamento(int id) async {
       return Consulta.fromMap(maps[i]);
     });
   }*/
+  
 }

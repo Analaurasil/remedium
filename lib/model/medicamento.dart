@@ -10,6 +10,7 @@ class Medicamento {
   final String inicioTratamento;
   final String fimTratamento;
   final int quantidade;
+   bool alarmActive; 
 
   Medicamento({
     this.id,
@@ -23,6 +24,7 @@ class Medicamento {
     required this.inicioTratamento,
     required this.fimTratamento,
     required this.quantidade,
+    this.alarmActive = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,6 +40,7 @@ class Medicamento {
       'inicioTratamento': inicioTratamento,
       'fimTratamento': fimTratamento,
       'quantidade': quantidade,
+      'alarmActive': alarmActive ? 1 : 0,
     };
   }
 
@@ -54,6 +57,7 @@ class Medicamento {
     inicioTratamento: map['inicioTratamento'] ?? 'Início não disponível', // Valor padrão
     fimTratamento: map['fimTratamento'] ?? 'Fim não disponível', // Valor padrão
     quantidade: map['quantidade'] ?? 0, // Valor padrão
+    alarmActive: map['alarmActive'] == 1,
   );
 }
 }

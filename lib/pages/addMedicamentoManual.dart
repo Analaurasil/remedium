@@ -19,7 +19,8 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
   final _tempoTratamentoController = TextEditingController();
   final _inicioTratamentoController = TextEditingController();
   final _fimTratamentoController = TextEditingController();
-  int _quantidade = 0; // Usar um inteiro para controlar a quantidade
+  int _quantidade = 0;// Usar um inteiro para controlar a quantidade
+  bool _alarmeAtivo = false;
 
   void _limparCampos() {
     _nomeMedicamentoController.clear();
@@ -32,6 +33,7 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
     _inicioTratamentoController.clear();
     _fimTratamentoController.clear();
     _quantidade = 0; // Resetar a quantidade
+     _alarmeAtivo = false;
   }
 
   Future<void> _inserirMedicamento() async {
@@ -67,6 +69,7 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
         inicioTratamento,
         fimTratamento,
         _quantidade,
+        _alarmeAtivo,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -209,7 +212,7 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
                     child: const Text('-'),
                   ),
                   Text(
-                    'Quantidade: $_quantidade',
+                    '$_quantidade',
                     style: const TextStyle(fontSize: 18),
                   ),
                   ElevatedButton(
@@ -233,6 +236,20 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
                 ],
               ),
               const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Ativar Alarme'),
+                  Switch(
+                    value: _alarmeAtivo, 
+                    onChanged: (value){
+                      setState(() {
+                        _alarmeAtivo = value;
+                      });
+                    }
+                  ),
+                ],
+              ),
               ElevatedButton(
                 onPressed: _inserirMedicamento,
                 child: const Text('Cadastrar Medicamento'),

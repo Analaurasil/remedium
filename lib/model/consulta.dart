@@ -6,6 +6,7 @@ class Consulta {
   final String clinica;
   final String endereco;
   final String horario;
+  bool alarmActive; 
 
   Consulta({
     this.id,
@@ -15,6 +16,7 @@ class Consulta {
     required this.clinica,
     required this.endereco,
     required this.horario,
+    this.alarmActive = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Consulta {
       'clinica': clinica,
       'endereco': endereco,
       'horario': horario,
+      'alarmActive': alarmActive ? 1 : 0,
     };
   }
 
@@ -38,6 +41,7 @@ class Consulta {
       clinica: map['clinica'] ?? 'Clínica não disponível',
       endereco: map['endereco'] ?? 'Endereço não disponível',
       horario: map['horario'] ?? 'Horário não disponível',
+       alarmActive: map['alarmActive'] == 1,
     );
   }
 }

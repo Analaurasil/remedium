@@ -17,11 +17,15 @@ class _MinhasConsultasState extends State<MinhasConsultas> {
   }
 
   Future<void> _fetchConsultas() async {
+    try{
     final db = DBHelper(); // Instância do seu DBHelper
     List<Consulta> consultas = await db.getConsultasForDate(DateTime.now()); // Método para buscar consultas
     setState(() {
       consultasList = consultas; // Atualiza a lista de consultas
     });
+    } catch (e){
+      debugPrint('Erro ao retornar consultas: $e');
+    }
   }
 
   @override
@@ -32,6 +36,8 @@ class _MinhasConsultasState extends State<MinhasConsultas> {
       ),
       body: consultasList.isEmpty
           ? Center(child: CircularProgressIndicator()) // Exibe um carregando enquanto busca as consultas
+          : consultasList.isEmpty
+          ? Center(child: Text('Nenhuma consulta encontrada.'))
           : ListView.builder(
               itemCount: consultasList.length,
               itemBuilder: (context, index) {

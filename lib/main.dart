@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:remedium25/routes.dart';
 import 'package:remedium25/temas.dart';
-void main() {
+//import 'db_helper.dart';
+void main() async{
+   //WidgetsFlutterBinding.ensureInitialized();
+ //await DBHelper.deleteDatabaseFile();
   runApp(const MyApp());
 }
 

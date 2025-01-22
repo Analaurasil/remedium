@@ -17,6 +17,165 @@ class _TelaAddConsultaState extends State<TelaAddConsulta> {
   final _enderecoController = TextEditingController();
   final _horarioController = TextEditingController();
   final _dataController = TextEditingController(); // Para a data
+  bool _alarmeAtivo = false; // Variável para controlar o estado do alarme
+
+  void _adicionarConsulta() async {
+    if (_tituloController.text.isEmpty || _medicoController.text.isEmpty || 
+        _clinicaController.text.isEmpty || _enderecoController.text.isEmpty || 
+        _horarioController.text.isEmpty || _dataController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      );
+      return;
+    }
+
+    try {
+      // Formata a data e o horário
+      String dataFormatada = _dataController.text; // Espera o formato DD/MM/YYYY
+      String horarioFormatado = _horarioController.text; // Espera o formato HH:mm
+
+      // Converte a string da data e horário para DateTime
+      DateTime dataHora = DateFormat('dd/MM/yyyy HH:mm').parse('$dataFormatada $horarioFormatado');
+
+      await DBHelper().insertConsulta(
+        _tituloController.text,
+        dataHora, // Passando o DateTime
+        _medicoController.text,
+        _clinicaController.text,
+        _enderecoController.text,
+        horarioFormatado, // Certifique-se de que o horário está no formato correto
+        _alarmeAtivo, // Passando o estado do alarme
+      );
+
+      // Navegue de volta ou mostre uma mensagem de sucesso
+      context.go('/homepage');
+    } catch (e) {
+      // Trate erros de conversão ou inserção
+      debugPrint('Error adding consulta: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao adicionar consulta: $e')),
+      );
+    }
+  }
+
+  Future<void> _selecionarHorario() async {
+    TimeOfDay? horarioSelecionado = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (horarioSelecionado != null) {
+      String horarioFormatado = horarioSelecionado.format(context);
+      _horarioController.text = horarioFormatado; // Atualiza o campo de texto
+    }
+  }
+
+  Future<void> _selecionarData() async {
+    DateTime? dataSelecionada = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (dataSelecionada != null) {
+      String dataFormatada = DateFormat('dd/MM/yyyy').format(dataSelecionada); // Formata a data
+      _dataController.text = dataFormatada; // Atualiza o campo de texto
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Adicionar Consulta'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _tituloController,
+              decoration: const InputDecoration(labelText: 'Título'),
+            ),
+            TextField(
+              controller: _medicoController,
+              decoration: const InputDecoration(labelText: 'Médico'),
+            ),
+            TextField(
+              controller: _clinicaController,
+              decoration: const InputDecoration(labelText: 'Clínica'),
+            ),
+            TextField(
+              controller: _enderecoController,
+              decoration: const InputDecoration(labelText: 'Endereço'),
+            ),
+            GestureDetector(
+              onTap: _selecionarHorario, // Abre o seletor de horário ao tocar
+              child: AbsorbPointer( // Impede a edição direta do campo
+                child: TextField(
+                  controller: _horarioController,
+                  decoration: const InputDecoration(labelText: 'Horário'),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: _selecionarData, // Abre o seletor de data ao tocar
+              child: AbsorbPointer( // Impede a edição direta do campo
+                child: TextField(
+                  controller: _dataController,
+                  decoration: const InputDecoration(labelText: 'Data (DD/MM/YYYY)'), // Formato esperado
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Adicionando o Switch para ativar/desativar o alarme
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Ativar Alarme'),
+                Switch(
+                  value: _alarmeAtivo,
+                  onChanged: (value) {
+                    setState(() {
+                      _alarmeAtivo = value; // Atualiza o estado do alarme
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _adicionarConsulta,
+              child: const Text('Adicionar Consulta'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+/*
+ANTES DO SWITH E DE FUNCIONAR A INSERÇÃO
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Importa a biblioteca intl para formatação
+import 'package:go_router/go_router.dart';
+import '/db_helper.dart'; // Importe seu DBHelper
+
+class TelaAddConsulta extends StatefulWidget {
+  const TelaAddConsulta({Key? key}) : super(key: key);
+
+  @override
+  _TelaAddConsultaState createState() => _TelaAddConsultaState();
+}
+
+class _TelaAddConsultaState extends State<TelaAddConsulta> {
+  final _tituloController = TextEditingController();
+  final _medicoController = TextEditingController();
+  final _clinicaController = TextEditingController();
+  final _enderecoController = TextEditingController();
+  final _horarioController = TextEditingController();
+  final _dataController = TextEditingController(); // Para a data
 
   void _adicionarConsulta() async {
     if (_tituloController.text.isEmpty || _medicoController.text.isEmpty || 
@@ -136,7 +295,7 @@ class _TelaAddConsultaState extends State<TelaAddConsulta> {
       ),
     );
   }
-}
+}*/
 /*
 AJUSTES FINAIS - ANTES
 import 'package:flutter/material.dart';
