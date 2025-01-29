@@ -145,6 +145,12 @@ class _TelaAddMedicamentoManualmenteState extends State<TelaAddMedicamentoManual
           'Cadastro de Medicamento',
           style: TextStyle(fontSize: 18),
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            context.go('/homepage');
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
